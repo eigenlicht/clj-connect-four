@@ -16,15 +16,15 @@ Ideas
 
 Useful links about conncet four AI programming:
 
-* Victor Allis master thesis: http://www.connectfour.net/Files/connect4.pdf
-* Student paper with Java Code: http://www.ccs.neu.edu/home/eclip5e/classes/csu520/index.html
+* [Victor Allis master thesis](http://www.connectfour.net/Files/connect4.pdf)
+* [Student paper with Java Code](http://www.ccs.neu.edu/home/eclip5e/classes/csu520/index.html)
   - http://en.wikipedia.org/wiki/Minimax_theorem
   - http://en.wikipedia.org/wiki/Alpha-beta_pruning
 * Theory of playing connect four:
   - http://homepages.cwi.nl/~tromp/c4.html
   - http://homepages.cwi.nl/~tromp/c4/c4.html
   - http://en.wikibooks.org/wiki/Connect_four
-* Lecture on Problem Solving and Search: http://www.dbai.tuwien.ac.at/staff/musliu/ProblemSolvingAI/
+* [Lecture on Problem Solving and Search](http://www.dbai.tuwien.ac.at/staff/musliu/ProblemSolvingAI/)
 
 Check field algorithm:
 
@@ -48,8 +48,9 @@ Checking algorithm
 Another crucial part beside the AI is the algorithm used for checking if a player has won.
 Currently I'm having three ideas in mind:
 
-1. Calculate all possible winning combinations and pull out those which are relevant for current turn
-Draf of implementation can be found here: https://gist.github.com/3520562
-2. Bit-board solution (not sure whether that's a good idea in Clojure)
-3. Something with core.logic (brings Prolog-like solution solving to Clojure)
-https://github.com/clojure/core.logic
+1.  Calculate all possible winning combinations and pull out those which are relevant for current turn
+
+    Draft of implementation can be found [here](https://gist.github.com/3520562)
+
+2.  [Bit-board solution](http://stackoverflow.com/questions/4261332/optimization-chance-for-following-bit-operations) (not sure whether that's a good idea in Clojure)
+3.  Something with [core.logic](https://github.com/clojure/core.logic) (brings Prolog-like solution solving to Clojure)
