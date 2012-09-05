@@ -50,7 +50,10 @@ Currently I'm having three ideas in mind:
 
 1.  Calculate all possible winning combinations and pull out those which are relevant for current turn
 
-    Draft of implementation can be found [here](https://gist.github.com/3520562)
+    [Draft of implementation](https://gist.github.com/3520562).
 
 2.  [Bit-board solution](http://stackoverflow.com/questions/4261332/optimization-chance-for-following-bit-operations) (not sure whether that's a good idea in Clojure)
+
+    [Draft of implementation](https://gist.github.com/3639220).
+
 3.  Something with [core.logic](https://github.com/clojure/core.logic) (brings Prolog-like solution solving to Clojure)
