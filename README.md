@@ -57,3 +57,5 @@ Currently I'm having three ideas in mind:
     [Draft of implementation](https://gist.github.com/3639220).
 
 3.  Something with [core.logic](https://github.com/clojure/core.logic) (brings Prolog-like solution solving to Clojure)
+
+    [Draft of implementation](https://gist.github.com/3702469).
