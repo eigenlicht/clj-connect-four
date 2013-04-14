@@ -35,8 +35,6 @@
          [(check/check-board-3 (board player-num)) CC3]
          [(check/check-board-2 (board player-num)) CC2]])))
 
-(def board (reduce #(board/insert % %2 1) board/empty-board [0 1 2 3]))
-
 ;;; MINIMAX ALGORITHM ;;;
 
 (defn not-nil?
@@ -47,19 +45,18 @@
   [board player-num x depth]
   (if (or (nil? board)
           (nil? (board/insert board x player-num))) nil
-  (if (= depth 0)
+    (if (= depth 0)
     (heuristic (board/insert board x player-num) player-num)
     (- (heuristic (board/insert board x player-num) player-num)
      (apply max (filter not-nil? (map #(minimax
                          (board/insert board x player-num)
                          (- 3 player-num)
                          %
-                         (- depth 1))
-                        [0 1 2 3 4 5 6])))))))
+                         (- depth 1)) 
+                       [0 1 2 3 4 5 6])))))))
 
 (defn get-highest-index
   [coll]
-  ;(println coll)
   (apply max-key second (filter #(not-nil? (second %)) (map-indexed vector coll))))
   
 (defn make-move
