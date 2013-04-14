@@ -38,7 +38,6 @@
                      :default 1 :parse-fn #(Integer. %)])
         flags (args 0)
         help (args 2)]
-    (println flags)
     (if (or (not (empty? (args 1)))
             (and (not (nil? (flags :ai)))
                  (nil? (some #{(flags :ai)} ["strong"])))
