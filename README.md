@@ -3,6 +3,11 @@ clj-connect-four
 
 Connect Four AI written in Clojure.
 
+Download
+--------
+
+[Jars from SourceForge](https://sourceforge.net/projects/cljconnectfour/files/)
+
 Ideas
 ------
 
@@ -46,15 +51,15 @@ Possible libraries:
 Checking algorithm
 ------------------
 Another crucial part beside the AI is the algorithm used for checking if a player has won.
-Currently I'm having three ideas in mind:
+Algorithm 1. Bit-board solution is currently in use.
 
-1.  Calculate all possible winning combinations and pull out those which are relevant for current turn
-
-    [Draft of implementation](https://gist.github.com/3520562).
-
-2.  [Bit-board solution](http://stackoverflow.com/questions/4261332/optimization-chance-for-following-bit-operations) (not sure whether that's a good idea in Clojure)
+1.  [Bit-board solution](http://stackoverflow.com/questions/4261332/optimization-chance-for-following-bit-operations)
 
     [Draft of implementation](https://gist.github.com/3639220).
+
+2.  Calculate all possible winning combinations and pull out those which are relevant for current turn
+
+    [Draft of implementation](https://gist.github.com/3520562).
 
 3.  Something with [core.logic](https://github.com/clojure/core.logic) (brings Prolog-like solution solving to Clojure)
 

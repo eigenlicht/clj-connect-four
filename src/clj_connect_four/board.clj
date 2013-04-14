@@ -23,15 +23,15 @@
   and sets according bit on his bitboard."
   [boards x player-num]
   (if (nil? (get-y (boards 0) x)) nil
-  (let [y (get-y (boards 0) x)
-        vec-board (assoc-in (boards 0) [y x] (player player-num))
-        bitboard1 (if (= player-num 1)
-                    (bit-insert (boards 1) (- 5 y) x)
-                    (boards 1))
-        bitboard2 (if (= player-num 2)
-                    (bit-insert (boards 2) (- 5 y) x)
-                    (boards 2))]
-        [vec-board bitboard1 bitboard2])))
+    (let [y (get-y (boards 0) x)
+          vec-board (assoc-in (boards 0) [y x] (player player-num))
+          bitboard1 (if (= player-num 1)
+                      (bit-insert (boards 1) (- 5 y) x)
+                      (boards 1))
+          bitboard2 (if (= player-num 2)
+                      (bit-insert (boards 2) (- 5 y) x)
+                      (boards 2))]
+      [vec-board bitboard1 bitboard2])))
 
 (defn print-board
   [board]
