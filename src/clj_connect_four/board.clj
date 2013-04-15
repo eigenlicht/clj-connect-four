@@ -33,12 +33,15 @@
                       (boards 2))]
       [vec-board bitboard1 bitboard2])))
 
+(defn board-full? [boards]
+  (empty? (filter #(some #{" "} %) (boards 0))))
+
 (defn print-board
   [board]
   (println [1 2 3 4 5 6 7])
   (doseq [row board] (println row)))
 
-(defn bit-print-board
+(defn print-bitboard
   [bitboard sym]
   (println [1 2 3 4 5 6 7])
   (doseq [bit-row (for [y (range 5 -1 -1)]
@@ -49,6 +52,6 @@
 (defn print-all-boards
   "For debugging: Print the vector and both bitboards."
   [boards]
-  (print-board     (boards 0))            (println)
-  (bit-print-board (boards 1) (player 1)) (println)
-  (bit-print-board (boards 2) (player 2)) (println))
+  (print-board    (boards 0))            (println)
+  (print-bitboard (boards 1) (player 1)) (println)
+  (print-bitboard (boards 2) (player 2)) (println))
