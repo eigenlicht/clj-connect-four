@@ -1,12 +1,38 @@
 clj-connect-four
 ================
 
-Connect Four AI written in Clojure.
+Connect Four Game and AI written in Clojure.
 
 Download
 --------
 
 [Jars from SourceForge](https://sourceforge.net/projects/cljconnectfour/files/)
+
+How to play
+-----------
+
+Download the .jar and run from the command line:
+
+    java -jar clj-connect-four-\*.jar
+
+to play against the strong AI with you being player 1.
+
+Arguments supported by the current version:
+
+    Usage:
+    
+     Switches        Default  Desc                        
+     --------        -------  ----                        
+     -1, --player-1  human    Player 1: [<AI-type>|human] 
+     -2, --player-2  strong   Player 2: [<AI-type>|human] 
+     -h, --help               Show this message.          
+    
+    
+    Possible AI types: [very-easy|easy|moderate|strong|very-strong|uber]
+
+If you want to play as player 2 against the best AI, just execute:
+
+    java -jar clj-connect-four\*.jar -1 uber -2 human
 
 Ideas
 ------
