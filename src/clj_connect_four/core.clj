@@ -1,17 +1,23 @@
 (ns clj-connect-four.core
   (:require [clj-connect-four.board        :as board]
             [clj-connect-four.check-board  :as check]
-            [clj-connect-four.ai-minimax   :as ai-strong]
+            [clj-connect-four.ai-minimax   :as ai]
             [clojure.tools.cli :only [cli] :as c])
   (:gen-class))
 
 (defn ai-move [ai boards player-num]
-  (if (= ai "strong")
-    (let [x (ai-strong/make-move boards player-num 3)]
+  (let [steps (case ai
+                "uber"        5
+                "very-strong" 4
+                "strong"      3
+                "moderate"    2
+                "easy"        1
+                "very-easy"   0)
+        x (ai/make-move boards player-num steps)]
       (println (+ x 1))
-      x)))
+      x))
 
-(defn connect-four [ai player]
+(defn connect-four [players]
   "Game loop. Runs until one player has connected four."
   (loop [player-num 1, boards board/empty-board]
     (board/print-board (boards 0)) ; normal output
@@ -19,28 +25,37 @@
     (println)
     (printf "Player %d's turn: " player-num)
     (flush)
-    (let [x (if (or (= player-num player) (nil? ai))
+    (let [x (if (= (players (dec player-num)) "human")
               (dec (read))
-              (ai-move ai boards player-num))
+              (ai-move (players (dec player-num)) boards player-num))
           new-boards (board/insert boards x player-num)
           has-won    (check/check-board (new-boards player-num))]
       (if (not= has-won 0)
         (comp (printf "\n\n\nPlayer %d has won!\n" player-num)
               (board/print-board (new-boards 0)))
-        (recur (if (= player-num 1) 2 1) new-boards)))))
+        (if (board/board-full? new-boards)
+          (comp (printf "\n\n\nGame is a draw!\n")
+                (board/print-board (new-boards 0)))
+          (recur (if (= player-num 1) 2 1) new-boards))))))
+
+(defn is-valid-player [p]
+  (some #{p} ["human" "very-easy" "easy" "moderate"
+              "strong" "very-strong" "uber"]))
 
 (defn -main
   [& args]
   (let [args (c/cli args
-                    ["-n" "--no-ai" "Play without AI." :default false]
-                    ["-a" "--ai" "AI to use. [easy|moderate|strong]" :default "strong"]
-                    ["-p" "--player" "Specify which player you want to be. [1|2]"
-                     :default 1 :parse-fn #(Integer. %)])
+                    ["-1" "--player-1" "Player 1: [<AI-type>|human]"
+                     :default "human"]
+                    ["-2" "--player-2" "Player 2: [<AI-type>|human]"
+                     :default "strong"]
+                    ["-h" "--help" "Show this message."])
         flags (args 0)
-        help (args 2)]
-    (if (or (not (empty? (args 1)))
-            (and (not (nil? (flags :ai)))
-                 (nil? (some #{(flags :ai)} ["strong"])))
-            (nil? (some #{(flags :player)} [1 2])))
-      (println help)
-      (connect-four (flags :ai) (flags :player)))))
+        help (apply str (args 2)
+                    "\n\nPossible AI types: [very-easy|easy|moderate|strong|very-strong|uber]\n")]
+    (if (and (not (contains? flags :help))
+             (empty? (args 1))
+             (is-valid-player (flags :player-1))
+             (is-valid-player (flags :player-2)))
+      (connect-four [(flags :player-1) (flags :player-2)])
+      (println help))))

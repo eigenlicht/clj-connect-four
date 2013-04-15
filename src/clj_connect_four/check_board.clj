@@ -6,7 +6,7 @@
   (bit-and c (bit-shift-right c x)))
 
 (defn check-board-4
-  "Checks whether given bitboard has won."
+  "Checks whether given bitboard has 4 connected coins."
   [bitboard]
   (map bit-check
        (map (partial bit-check bitboard) [6 7 8 1])
