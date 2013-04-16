@@ -21,17 +21,43 @@
   (* points
      (apply + (map #(count (filter true? (bit-count %))) check))))
 
+(defn get-old-y [board x] ; TODO: check time with let
+  (if (nil? (board/get-y board x))
+    5
+    (dec (board/get-y board x))))
+
 (defn heuristic
   "Calculates the main heuristic value of given bitboards for a player."
-  [boards player-num]
+  [boards player-num x]
   (apply +
     (map (fn [[c p]] (get-score c p))
+         ; what new connections do we get?
          [[(check/check-board-4 (boards player-num)) CC4]
           [(check/check-board-3 (boards player-num)) CC3]
           [(check/check-board-2 (boards player-num)) CC2]
-          [(check/check-board-4 (boards (- 3 player-num))) (- 1 CC4)]
-          [(check/check-board-3 (boards (- 3 player-num))) (- 1 CC3)]
-          [(check/check-board-2 (boards (- 3 player-num))) (- 1 CC2)]])))
+;          [(check/check-board-4 (boards (- 3 player-num))) (- 1 CC4)]
+;          [(check/check-board-3 (boards (- 3 player-num))) (- 1 CC3)]
+;          [(check/check-board-2 (boards (- 3 player-num))) (- 1 CC2)]
+          ; would opponent connect coins if he set here?
+          [(check/check-board-4
+            (board/bit-insert (boards (- 3 player-num))
+                              (get-old-y (boards 0) x) x)) (/ CC4 2)]
+          [(check/check-board-3
+            (board/bit-insert (boards (- 3 player-num))
+                              (get-old-y (boards 0) x) x)) (/ CC3 2)]
+          [(check/check-board-2
+            (board/bit-insert (boards (- 3 player-num))
+                              (get-old-y (boards 0) x) x)) (/ CC2 2)]
+          ; has opponent advantage by me setting a coin here?
+          [(check/check-board-4
+            (or (nth (board/insert boards x (- 3 player-num)) (- 3 player-num)) 0))
+           (- 1 CC4)]
+          [(check/check-board-3
+            (or (nth (board/insert boards x (- 3 player-num)) (- 3 player-num)) 0))
+           (- 1 CC3)]
+          [(check/check-board-2
+            (or (nth (board/insert boards x (- 3 player-num)) (- 3 player-num)) 0))
+           (- 1 CC2)]])))
 
 ;; consider possible winning combinations
 ;; (only when first heuristic returns equal values)
@@ -60,12 +86,6 @@
                                 [y x])))]
     (concat rows columns diagonals)))
 
-(defn filter-current-move [y x coll]
-  "Filter win-combos for coords including given [y x]."
-  (if (nil? y)
-    (some #{[0 x]} coll)
-    (some #{[(inc y) x]} coll)))
-
 (defn filter-open-combos [player-num boards coll]
   "Filter for combos which are still open."
   (some (fn [[y x]] (or (not (bit-test (boards 0) (+ y (* 7 x))))
@@ -77,10 +97,9 @@
   [boards player-num x]
   (count (filter
           #(and
-            (filter-current-move (board/get-y (boards 0) x) x %)
+            (some #{[(board/get-y (boards 0) x) x]} %)
             (filter-open-combos player-num boards %))
           win-combos)))
-
 ;;; MINIMAX ALGORITHM ;;;
 
 (defn not-nil? [x]
@@ -96,8 +115,8 @@
   (if (or (nil? boards)
           (nil? (board/insert boards x player-num))) nil
     (if (= depth 0)
-      (heuristic (board/insert boards x player-num) player-num)
-      (- (heuristic (board/insert boards x player-num) player-num)
+      (heuristic (board/insert boards x player-num) player-num x)
+      (- (heuristic (board/insert boards x player-num) player-num x)
          (get-max (filter not-nil?
                           (map #(minimax
                                  (board/insert boards x player-num)
