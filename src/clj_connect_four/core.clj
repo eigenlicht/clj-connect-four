@@ -19,9 +19,8 @@
 
 (defn connect-four [players]
   "Game loop. Runs until one player has connected four."
-  (loop [player-num 1, boards board/empty-board]
-    (board/print-board (boards 0)) ; normal output
-    ;(board/print-all-boards boards) ; debug output
+  (loop [player-num 1, boards board/empty-boards]
+    (board/print-board boards) ; normal output
     (println)
     (printf "Player %d's turn: " player-num)
     (flush)
@@ -32,10 +31,10 @@
           has-won    (check/check-board (new-boards player-num))]
       (if (not= has-won 0)
         (comp (printf "\n\n\nPlayer %d has won!\n" player-num)
-              (board/print-board (new-boards 0)))
+              (board/print-board new-boards))
         (if (board/board-full? new-boards)
           (comp (printf "\n\n\nGame is a draw!\n")
-                (board/print-board (new-boards 0)))
+                (board/print-board new-boards))
           (recur (if (= player-num 1) 2 1) new-boards))))))
 
 (defn is-valid-player [p]

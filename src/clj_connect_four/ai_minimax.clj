@@ -10,16 +10,10 @@
 (def CC3  32)
 (def CC2  4)
 
-(def bits-to-check
-  "All bits which are inside the bitboard."
-  (vec (flatten (for [y (range 5 -1 -1)]
-                  (for [x (range 0 43 7)]
-                    (+ x y))))))
-
 (defn bit-count
   "Checks how many bits are set on given bitboard."
-  [bitboard]
-  (map #(bit-test bitboard %) bits-to-check))
+  [board]
+  (map #(bit-test board %) board/board-bits))
          
 (defn get-score
   "Determines score of a bitboard manipulated by check-board-*."
@@ -29,15 +23,15 @@
 
 (defn heuristic
   "Calculates the main heuristic value of given bitboards for a player."
-  [board player-num]
+  [boards player-num]
   (apply +
     (map (fn [[c p]] (get-score c p))
-         [[(check/check-board-4 (board player-num)) CC4]
-          [(check/check-board-3 (board player-num)) CC3]
-          [(check/check-board-2 (board player-num)) CC2]
-          [(check/check-board-4 (board (- 3 player-num))) (- 1 CC4)]
-          [(check/check-board-3 (board (- 3 player-num))) (- 1 CC3)]
-          [(check/check-board-2 (board (- 3 player-num))) (- 1 CC2)]])))
+         [[(check/check-board-4 (boards player-num)) CC4]
+          [(check/check-board-3 (boards player-num)) CC3]
+          [(check/check-board-2 (boards player-num)) CC2]
+          [(check/check-board-4 (boards (- 3 player-num))) (- 1 CC4)]
+          [(check/check-board-3 (boards (- 3 player-num))) (- 1 CC3)]
+          [(check/check-board-2 (boards (- 3 player-num))) (- 1 CC2)]])))
 
 ;; consider possible winning combinations
 ;; (only when first heuristic returns equal values)
@@ -72,18 +66,19 @@
     (some #{[0 x]} coll)
     (some #{[(inc y) x]} coll)))
 
-(defn filter-open-combos [n board coll]
+(defn filter-open-combos [player-num boards coll]
   "Filter for combos which are still open."
-  (nil? (some #{(board/player (- 3 n))}
-              (map #(get-in board %) coll))))
+  (some (fn [[y x]] (or (not (bit-test (boards 0) (+ y (* 7 x))))
+                        (bit-test (boards player-num) (+ y (* 7 x)))))
+        coll))
 
 (defn heuristic2
   "Calculate second heuristic value."
-  [board player-num x]
+  [boards player-num x]
   (count (filter
           #(and
-            (filter-current-move (board/get-y (board 0) x) x %)
-            (filter-open-combos player-num (board 0) %))
+            (filter-current-move (board/get-y (boards 0) x) x %)
+            (filter-open-combos player-num boards %))
           win-combos)))
 
 ;;; MINIMAX ALGORITHM ;;;
@@ -97,15 +92,15 @@
 
 (defn minimax
   "Minimax algorithm using only main heuristic."
-  [board player-num x depth]
-  (if (or (nil? board)
-          (nil? (board/insert board x player-num))) nil
+  [boards player-num x depth]
+  (if (or (nil? boards)
+          (nil? (board/insert boards x player-num))) nil
     (if (= depth 0)
-      (heuristic (board/insert board x player-num) player-num)
-      (- (heuristic (board/insert board x player-num) player-num)
+      (heuristic (board/insert boards x player-num) player-num)
+      (- (heuristic (board/insert boards x player-num) player-num)
          (get-max (filter not-nil?
                           (map #(minimax
-                                 (board/insert board x player-num)
+                                 (board/insert boards x player-num)
                                  (- 3 player-num)
                                  %
                                  (- depth 1))
@@ -118,15 +113,15 @@
 (defn make-move
   "Generate next move using minimax
   and second heuristic if needed."
-  [board player-num depth]
-  (let [heuristics (map #(minimax board player-num % depth)
+  [boards player-num depth]
+  (let [heuristics (map #(minimax boards player-num % depth)
                         [0 1 2 3 4 5 6])
         highest (get-highest-index (map-indexed vector heuristics))]
     (println heuristics)
     (if (> (count (filter #{(second highest)} heuristics)) 1)
       ; equal values from first heuristics - look at second
       (first (get-highest-index
-              (map #(vector (first %) (heuristic2 (board 0) player-num (first %)))
+              (map #(vector (first %) (heuristic2 boards player-num (first %)))
                    ; only consider the highest and equal values
                    (filter #(= (second highest) (second %))
                            (map-indexed vector heuristics)))))
