@@ -3,21 +3,21 @@
 (def player ["_", "X", "O"])
 
 (def empty-boards
-  "empty bitboards for each player and game state (just 0s)."
+  "Empty bitboards for each player and game state (just 0s)."
   [0 0 0])
-  
+
 (def board-bits
   "All bits which are inside the bitboard."
   (vec (flatten (for [y (range 5 -1 -1)]
                   (for [x (range 0 43 7)]
                     (+ x y))))))
-  
+
 (defn get-y
   "Determines y-coordinate for given x-coordinate."
   [board x]
   (first (filter #(not (bit-test board (+ % (* x 7))))
                  (range 0 6))))
-  
+
 (defn bit-insert
   "Sets the bit of the given bitboard at position (y, x)."
   [board y x]
