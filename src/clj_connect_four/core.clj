@@ -31,7 +31,7 @@
 (defn connect-four [players]
   "Game loop. Runs until one player has connected four."
   (loop [player-num 1, boards board/empty-boards]
-    (board/print-board boards) ; normal output
+    (board/print-board boards)
     (println)
     (let [x (if (= (players (dec player-num)) "human")
               (prompt-input player-num boards)

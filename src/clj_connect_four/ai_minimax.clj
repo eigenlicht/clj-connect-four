@@ -12,15 +12,14 @@
 (def CC2  4)
 
 (defn bit-count
-  "Checks how many bits are set on given bitboard."
+  "Counts how many bits are set on given bitboard."
   [board]
-  (map #(bit-test board %) board/board-bits))
+  (count (filter true? (map #(bit-test board %) board/board-bits))))
 
 (defn get-score
   "Determines score of a bitboard manipulated by check-board-*."
-  [check points]
-  (* points
-     (apply + (map #(count (filter true? (bit-count %))) check))))
+  [check score]
+  (* score (apply + (map bit-count check))))
 
 (defn get-old-y [board x]
   (let [y (board/get-y board x)]
@@ -35,16 +34,16 @@
    (> (check/check-board (boards player-num)) 0)
      CC4
    :else
-   (let [new-board (board/bit-insert (boards (- 3 player-num))
+   (let [alt-board (board/bit-insert (boards (- 3 player-num))
                                      (get-old-y (boards 0) x) x)]
      (apply + (map
-               (fn [[c p]] (get-score c p))
+               (fn [[check score]] (get-score check score))
               ;; what new connections do we get?
                [[(check/check-board-3 (boards player-num)) CC3]
                 ;[(check/check-board-2 (boards player-num)) CC2]
               ;; would opponent connect coins if he set here?
-                [(check/check-board-4 new-board) (/ CC4 4)]
-                [(check/check-board-3 new-board) (/ CC3 2)]])))))
+                [(check/check-board-4 alt-board) (/ CC4 4)]
+                [(check/check-board-3 alt-board) (/ CC3 2)]])))))
                 ;[(check/check-board-2
 
 ;;; MINIMAX ALGORITHM ;;;
