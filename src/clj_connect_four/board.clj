@@ -27,16 +27,10 @@
   "Inserts symbol for given player (either 1 or 2) at specified x
   and sets according bit on his bitboard."
   [boards x player-num]
-  (if (nil? (get-y (boards 0) x)) nil
-    (let [y (get-y (boards 0) x)
-          bitboard (bit-insert (boards 0) y x)
-          bitboard-p1 (if (= player-num 1)
-                        (bit-insert (boards 1) y x)
-                        (boards 1))
-          bitboard-p2 (if (= player-num 2)
-                        (bit-insert (boards 2) y x)
-                        (boards 2))]
-      [bitboard bitboard-p1 bitboard-p2])))
+  (let [y (get-y (boards 0) x)]
+    (if (nil? y) nil
+      (-> (assoc boards 0 (bit-insert (boards 0) y x))
+          (assoc player-num (bit-insert (boards player-num) y x))))))
 
 (defn board-full? [boards]
   (empty? (filter #(not (bit-test (boards 0) %)) board-bits)))
